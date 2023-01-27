@@ -75,7 +75,7 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
         ArrayList<String> removed_prods = new ArrayList<>();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        SimpleDateFormat fancyFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss");
+        SimpleDateFormat fancyFormat = new SimpleDateFormat("EEE MMM dd hh:mm aa");
         SimpleDateFormat justDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date delDate;
         try {
@@ -85,14 +85,13 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
         }
 
         for(int i=0; i<kot.added.size(); i++){
-            Log.i("KOT_ITEMS_LOG", kot.added.get(i).quantity + " x " + kot.added.get(i).name);
+            // Log.i("KOT_ITEMS_LOG", kot.added.get(i).quantity + " x " + kot.added.get(i).name);
             added_prods.add(kot.added.get(i).quantity + " x " + kot.added.get(i).name);
         }
         for(int i=0; i<kot.removed.size(); i++){
-            Log.i("KOT_ITEMS_LOG", kot.added.get(i).quantity + " x " + kot.added.get(i).name);
+            // Log.i("KOT_ITEMS_LOG", kot.added.get(i).quantity + " x " + kot.added.get(i).name);
             removed_prods.add(kot.removed.get(i).quantity + " x " + kot.removed.get(i).name);
         }
-        Log.i("KOT_ITEMS_LOG", String.valueOf(added_prods.size()));
 
         ArrayAdapter adapter = new ArrayAdapter<String>(getContext(), R.layout.addedproduct_listview, added_prods);
         ArrayAdapter rdapter = new ArrayAdapter<String>(getContext(), R.layout.remoproduct_listview, removed_prods);

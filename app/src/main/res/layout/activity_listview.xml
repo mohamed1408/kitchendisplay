@@ -68,6 +68,19 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent">
         <LinearLayout
+            android:layout_weight="0.5"
+            android:layout_height="fill_parent"
+            android:padding="10dp"
+            android:layout_width="0dp">
+            <ImageButton
+                android:id="@+id/undo_btn"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_undo"
+                />
+        </LinearLayout>
+        <LinearLayout
             android:layout_weight="2"
             android:layout_height="fill_parent"
             android:padding="10dp"

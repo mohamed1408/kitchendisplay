@@ -22,6 +22,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -135,23 +138,21 @@ public class MainActivity extends AppCompatActivity {
                             Kot kot = new Kot();
                             kot.populate(jsObject);
 
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                            Date delDate;
-                            try {
-                                delDate = dateFormat.parse(kot.deliverydatetime);
-                            } catch (ParseException e) {
-                                throw new RuntimeException(e);
-                            }
-                            if(new Date().after(delDate)){
-                                Log.i("KOTS_DATE_CHECK", "AFter True " + kot.invoiceno + " " + kot.deliverydatetime);
-                                fKOTs.add(kot);
-                            } else {
-                                Log.i("KOTS_DATE_CHECK", "AFter False " + kot.invoiceno + " " + kot.deliverydatetime);
+                            LocalDateTime delDate = LocalDateTime.parse(kot.deliverydatetime);
+                            LocalDate localDate = LocalDate.now();
+                            LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
+//                            Log.i("KOTS_DATE_CHECK", endOfDay.toString() + " " + delDate);
+                            if(endOfDay.isAfter(delDate)){
+                                Log.i("KOTS_DATE_CHECK", "AFter True " + kot.deliverydatetime + " " + kot.invoiceno);
                                 nKOTs.add(kot);
+                            } else {
+                                Log.i("KOTS_DATE_CHECK", "AFter Fals " + kot.deliverydatetime + " " + kot.invoiceno);
+                                fKOTs.add(kot);
                             }
                             // KOTs.add(kot);
                         }
-
+                        nKOTs.sort((a,b) -> a.deliverydatetime.compareTo(b.deliverydatetime));
+                        fKOTs.sort((a,b) -> a.deliverydatetime.compareTo(b.deliverydatetime));
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

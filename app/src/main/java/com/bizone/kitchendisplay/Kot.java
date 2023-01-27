@@ -10,8 +10,9 @@ import java.util.ArrayList;
 public class Kot {
     String invoiceno, deliverydatetime, instructions, ordername, note;
     Long createdtimestamp;
-    Integer statusid, kotno, ordertypid, orderid;
+    Integer statusid, kotno, ordertypid, kotid;
     ArrayList<Product> added, removed;
+    boolean isloading;
 
     public void populate(JSONObject obj) throws JSONException {
         this.invoiceno = obj.getString("invoiceno");
@@ -25,7 +26,9 @@ public class Kot {
         this.statusid = obj.getInt("KOTStatusId");
         this.kotno = obj.getInt("KOTNo");
         this.ordertypid = obj.getInt("ordertypeid");
-        this.orderid = obj.getInt("Id");
+        this.kotid = obj.getInt("Id");
+
+        this.isloading = false;
 
         this.added = new ArrayList<Product>();
         this.removed = new ArrayList<Product>();

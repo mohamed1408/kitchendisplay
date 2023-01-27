@@ -14,6 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 //import java.sql.Date;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -21,11 +25,20 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class KOTsViewAdapter extends ArrayAdapter<Kot> {
     ArrayList<Kot> _kots;
+    Context _context;
+    OkHttpClient client = new OkHttpClient();
     public KOTsViewAdapter(@NonNull Context context, ArrayList<Kot> kots) {
         super(context, 0, kots);
         _kots = kots;
+        _context = context;
     }
 
     @NonNull
@@ -99,36 +112,66 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
 
         // then according to the position of the view assign the desired TextView 2 for the same
         String btn_text = null;
-        switch (kot.statusid){
-            case 0:
-                btn_text = "Accept";
-                break;
-            case 1:
-                btn_text = "Start";
-                break;
-            case 2:
-                btn_text = "Complete";
-                break;
-            case 3:
-                btn_text = "Serve";
-                break;
-            case 4:
-                btn_text = "Served";
-                status_btn.setEnabled(false);
-                break;
+        if (kot.isloading == true) {
+            btn_text = "...";
+        } else {
+            switch (kot.statusid){
+                case 0:
+                    btn_text = "Accept";
+                    break;
+                case 1:
+                    btn_text = "Start";
+                    break;
+                case 2:
+                    btn_text = "Complete";
+                    break;
+                case 3:
+                    btn_text = "Serve";
+                    break;
+                case 4:
+                    btn_text = "Served";
+                    status_btn.setEnabled(false);
+                    break;
+            }
         }
         status_btn.setText(btn_text);
         status_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(kot.statusid < 4) {
-                    kot.statusid += 1;
-                    notifyDataSetChanged();
+                if(kot.statusid < 4 && kot.isloading != true) {
+                    String url = "https://biz1pos.azurewebsites.net/api/KOT/KOTStatusChange?kotid=" + kot.kotid + "&statusid=" + (kot.statusid+1);
+                    Request req = new Request.Builder()
+                            .url(url)
+                            .build();
+                    kot.isloading = true;
+                    ((MainActivity) _context).updateList();
+                    client.newCall(req).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            Log.i("KOT_SATUS_CHANGE", String.valueOf(e));
+                            kot.isloading = false;
+                            ((MainActivity) _context).updateList();
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            // Log.i("KOT_SATUS_CHANGE", response.body().string());
+                            try {
+                                JSONObject resBody = new JSONObject(response.body().string());
+                                int status = resBody.getInt("status");
+                                if(status == 200){
+                                    kot.statusid += 1;
+                                    kot.isloading = false;
+                                    ((MainActivity) _context).updateList();
+                                }
+                            } catch (JSONException e) {
+                                Log.i("KOT_SATUS_CHANGE", String.valueOf(e));
+                                kot.isloading = false;
+                                ((MainActivity) _context).updateList();
+                            }
+                        }
+                    });
                 }
-//                Log.i("OkHttp_log_success", _kots.get(1).invoiceno);
-//                _kots.get(1).invoiceno = "None";
-//                kot.invoiceno = "qwerty";
-//                notifyDataSetChanged();
             }
         });
         // then return the recyclable view

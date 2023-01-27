@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -36,13 +37,21 @@
                     android:id="@+id/future_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Future KOTs" />
+                    android:text="Future KOTs"/>
             </LinearLayout>
         </LinearLayout>
-        <ListView
-            android:id="@+id/kot_list"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        </ListView>
+            android:layout_height="match_parent"
+            tools:context=".MainActivity">
+            <ListView
+                android:id="@+id/kot_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </ListView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 </RelativeLayout>

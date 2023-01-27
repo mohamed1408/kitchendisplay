@@ -38,4 +38,5 @@ dependencies {
 
     implementation 'com.microsoft.signalr:signalr:3.0.0'
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 }

@@ -1,11 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--  Single List Item Design -->
-
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/label"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="10dip"
-    android:textSize="16dip"
-    android:textStyle="bold" >
-</TextView>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:ignore="UselessParent">
+    <LinearLayout android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent">
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:padding="10dp"
+            android:layout_width="0dp">
+            <TextView
+                android:id="@+id/ordername"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="10dip"
+                android:textSize="16dip"
+                android:textStyle="bold" >
+            </TextView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_weight="2"
+            android:layout_height="fill_parent"
+            android:padding="10dp"
+            android:layout_width="0dp">
+            <TextView
+                android:id="@+id/invoiceno"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="10dip"
+                android:textSize="16dip"
+                android:textStyle="bold"
+                android:gravity="right"
+                android:textAlignment="gravity">
+            </TextView>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent">
+        <LinearLayout
+            android:layout_height="fill_parent"
+            android:padding="10dp"
+            android:layout_width="fill_parent">
+            <ListView
+                android:id="@+id/added_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </ListView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_height="fill_parent"
+            android:padding="10dp"
+            android:layout_width="fill_parent">
+            <ListView
+                android:id="@+id/removed_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </ListView>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent">
+        <LinearLayout
+            android:layout_weight="2"
+            android:layout_height="fill_parent"
+            android:padding="10dp"
+            android:layout_width="0dp">
+            <TextView
+                android:id="@+id/deldttm"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="10dip"
+                android:textSize="16dip"
+                android:textStyle="bold" >
+            </TextView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:padding="10dp"
+            android:layout_width="0dp">
+            <Button
+                android:id="@+id/status_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -9,7 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ToggleButton;
 
 import com.microsoft.signalr.HubConnection;
 import com.microsoft.signalr.HubConnectionBuilder;
@@ -26,7 +29,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -42,60 +47,160 @@ public class MainActivity extends AppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     HubConnection hubConnection;
     ArrayList<Kot> KOTs = new ArrayList<>();
+    ArrayList<Kot> allKOTs = new ArrayList<>();
     ArrayList<Kot> nKOTs = new ArrayList<>();
     ArrayList<Kot> fKOTs = new ArrayList<>();
     OkHttpClient client = new OkHttpClient();
     KOTsViewAdapter adapter;
-
+    Integer storeid, companyid, kotgroupid;
+    String base_url, url;
+    ToggleButton takeawaytg, deltg, pckuptg, change_filter, change_filter1, newtg, pendtg, compltg;
+    LinearLayout status_filter, typ_filter;
+    ListView listView;
+    List<Integer> selected_types = new ArrayList<Integer>();
+    List<Integer> selected_statuses = new ArrayList<Integer>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        storeid = 4;
+        companyid = 3;
+        kotgroupid = 15;
+        base_url = "https://biz1pos.azurewebsites.net/";
+
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        adapter = new KOTsViewAdapter(this, KOTs);
-
-        hubConnection = HubConnectionBuilder.create("https://biz1pos.azurewebsites.net/uphub").build();
-
         now_btn = (Button)findViewById(R.id.now_btn);
         future_btn = (Button)findViewById(R.id.future_btn);
+        listView = (ListView) findViewById(R.id.kot_list);
+        takeawaytg = (ToggleButton)findViewById(R.id.takeawaytg);
+        deltg = (ToggleButton)findViewById(R.id.deltg);
+        pckuptg = (ToggleButton)findViewById(R.id.pckuptg);
+        newtg = (ToggleButton)findViewById(R.id.newtg);
+        pendtg = (ToggleButton)findViewById(R.id.pendtg);
+        compltg = (ToggleButton)findViewById(R.id.compltg);
 
-        String url = "https://biz1pos.azurewebsites.net/api/KOT/GetStoreKots?storeId=22&orderid=0&kotGroupId=15";
-        ListView listView = (ListView) findViewById(R.id.kot_list);
+        change_filter = (ToggleButton)findViewById(R.id.change_filter);
+        change_filter1 = (ToggleButton)findViewById(R.id.change_filter1);
+
+        newtg = (ToggleButton)findViewById(R.id.newtg);
+        pendtg = (ToggleButton)findViewById(R.id.pendtg);
+        compltg = (ToggleButton)findViewById(R.id.compltg);
+
+        status_filter = (LinearLayout) findViewById(R.id.status_filter);
+        typ_filter = (LinearLayout) findViewById(R.id.typ_filter);
+
+
+        adapter = new KOTsViewAdapter(this, KOTs);
+
+        hubConnection = HubConnectionBuilder.create(base_url + "uphub").build();
+        hubConnection.start();
+
+        signalRconfig();
+
+        url = base_url + "api/KOT/GetStoreKots?storeId=" + storeid + "&orderid=0&kotGroupId=" + kotgroupid;
         listView.setAdapter(adapter);
+
+        newtg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b) {
+                    selected_statuses.add(0);
+                } else {
+                    selected_types.removeIf(x -> x == 0);
+                }
+                applyFilter();
+            }
+        });
+        pendtg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b) {
+                    selected_statuses.addAll(Arrays.asList(1,2,3));
+                } else {
+                    selected_types.removeIf(x -> x >= 1 && x <= 3);
+                }
+                applyFilter();
+            }
+        });
+        compltg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b) {
+                    selected_statuses.add(4);
+                } else {
+                    selected_types.removeIf(x -> x == 4);
+                }
+                applyFilter();
+            }
+        });
+
+        change_filter1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                typ_filter.setVisibility(View.GONE);
+                status_filter.setVisibility(View.VISIBLE);
+            }
+        });
+        change_filter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                typ_filter.setVisibility(View.VISIBLE);
+                status_filter.setVisibility(View.GONE);
+            }
+        });
+        takeawaytg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b) {
+                    selected_statuses.add(2);
+                } else {
+                    selected_types.removeIf(x -> x == 4);
+                }
+                applyFilter();
+            }
+        });
+        deltg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b) {
+                    selected_statuses.add(3);
+                } else {
+                    selected_types.removeIf(x -> x == 4);
+                }
+                applyFilter();
+            }
+        });
+        pckuptg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b) {
+                    selected_statuses.add(4);
+                } else {
+                    selected_types.removeIf(x -> x == 4);
+                }
+                applyFilter();
+            }
+        });
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                Log.i("SIGNAL_R_STATE", hubConnection.getConnectionState().toString());
+                if (hubConnection.getConnectionState() == HubConnectionState.DISCONNECTED) {
+                    hubConnection.start();
+                }
                 FetchItems();
             }
         });
-        // retry_btn.setOnClickListener(new View.OnClickListener() {
-        //     @Override
-        //     public void onClick(View view) {
-        //         if(hubConnection.getConnectionState() == HubConnectionState.DISCONNECTED){
-        //             Log.i("SIGNAL_R_DELORDUPDATE", "Starting SIGNAL_R");
-        //             hubConnection.start();
-        //         } else if(hubConnection.getConnectionState() == HubConnectionState.CONNECTED){
-        //             hubConnection.send("joinroom", "androidroom");
-        //             Log.i("SIGNAL_R_DELORDUPDATE", hubConnection.getConnectionId());
-        //         }
-        //     }
-        // });
-        // hubConnection.on("DeliveryOrderUpdate", (a, b, c, d, e) -> {
-        //     Log.i("SIGNAL_R_DELORDUPDATE", c);
-        // },Integer.class, Integer.class, String.class, String.class, Integer.class);
-        // hubConnection.on("JoinMessage", (a) -> {
-        //     Log.i("SIGNAL_R_JOINMESSAGE", a);
-        // },String.class);
         FetchItems();
     }
     //METHOD WHICH WILL HANDLE DYNAMIC INSERTION
     public void FetchItems() {
-        String url = "https://biz1pos.azurewebsites.net/api/KOT/GetStoreKots?storeId=22&orderid=0&kotGroupId=15";
         Request req = new Request.Builder()
                 .url(url)
                 .build();
+        swipeRefreshLayout.setRefreshing(true);
         client.newCall(req).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -138,29 +243,14 @@ public class MainActivity extends AppCompatActivity {
                             Kot kot = new Kot();
                             kot.populate(jsObject);
 
-                            LocalDateTime delDate = LocalDateTime.parse(kot.deliverydatetime);
-                            LocalDate localDate = LocalDate.now();
-                            LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
-//                            Log.i("KOTS_DATE_CHECK", endOfDay.toString() + " " + delDate);
-                            if(endOfDay.isAfter(delDate)){
-                                Log.i("KOTS_DATE_CHECK", "AFter True " + kot.deliverydatetime + " " + kot.invoiceno);
-                                nKOTs.add(kot);
-                            } else {
-                                Log.i("KOTS_DATE_CHECK", "AFter Fals " + kot.deliverydatetime + " " + kot.invoiceno);
-                                fKOTs.add(kot);
-                            }
-                            // KOTs.add(kot);
+                            allKOTs.add(kot);
                         }
-                        nKOTs.sort((a,b) -> a.deliverydatetime.compareTo(b.deliverydatetime));
-                        fKOTs.sort((a,b) -> a.deliverydatetime.compareTo(b.deliverydatetime));
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                adapter.clear();
-                                adapter.addAll(nKOTs);
-                                adapter.notifyDataSetChanged();
                                 now_btn.setEnabled(false);
                                 future_btn.setEnabled(true);
+                                applyFilter();
                             }
                         });
                     } catch (JSONException e) {
@@ -170,6 +260,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void applyFilter() {
+        LocalDate localDate = LocalDate.now();
+        LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
+        Kot kot;
+        nKOTs.clear();
+        fKOTs.clear();
+        for (int i=0; i<allKOTs.size(); i++){
+            kot = allKOTs.get(i);
+            if(selected_types.contains(kot.ordertypid) && selected_statuses.contains(kot.statusid)) {
+                LocalDateTime delDate = LocalDateTime.parse(kot.deliverydatetime);
+                if(endOfDay.isAfter(delDate)){
+                    nKOTs.add(kot);
+                } else {
+                    fKOTs.add(kot);
+                }
+            }
+        }
+        nKOTs.sort((a,b) -> a.deliverydatetime.compareTo(b.deliverydatetime));
+        fKOTs.sort((a,b) -> a.deliverydatetime.compareTo(b.deliverydatetime));
+        Log.i("KOT FILTER", "AllKots: " + allKOTs.size() + " nKots: " + nKOTs.size() + " fKOTs: " + fKOTs.size());
+        if(!now_btn.isEnabled()) viewNowKots(now_btn);
+        else if(!future_btn.isEnabled()) viewFutureKots(future_btn);
     }
 
     public void viewNowKots(View v) {
@@ -190,12 +304,27 @@ public class MainActivity extends AppCompatActivity {
         future_btn.setEnabled(false);
     }
 
-    public void updateList(){
+    public void updateList() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                adapter.cancelAllTimers();
                 adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    public void  signalRconfig() {
+         hubConnection.on("DeliveryOrderUpdate", (o_storeid, del_storeid, invoiceno, event, orderid) -> {
+             Log.i("SIGNAL_R_DELORDUPDATE", o_storeid + " " + del_storeid + " " + invoiceno + " " + event + " " + orderid);
+             if(del_storeid == storeid) {
+                 Log.i("SIGNAL_R_DELORDUPDATE", "Fetching KOTs.....");
+                 FetchItems();
+             }
+         },Integer.class, Integer.class, String.class, String.class, Integer.class);
+
+         hubConnection.onClosed((a) -> {
+             Log.i("SIGNAL_R_DELORDUPDATE", "Error");
+         });
     }
 }

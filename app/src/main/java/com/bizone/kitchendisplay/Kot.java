@@ -12,13 +12,12 @@ public class Kot {
     Long createdtimestamp;
     Integer statusid, kotno, ordertypid, kotid;
     ArrayList<Product> added, removed;
-    boolean isloading;
+    boolean isloading, isitemrendered;
 
     public void populate(JSONObject obj) throws JSONException {
         this.invoiceno = obj.getString("invoiceno");
         this.deliverydatetime = obj.getString("DeliveryDateTime");
         this.instructions = obj.getString("Instruction");
-        this.ordername = "Delivery";
         this.note = obj.getString("Note");
 
         this.createdtimestamp = obj.getLong("kotTimeStamp");
@@ -32,6 +31,29 @@ public class Kot {
 
         this.added = new ArrayList<Product>();
         this.removed = new ArrayList<Product>();
+
+        switch (ordertypid) {
+            case 1:
+                this.ordername = "DINE IN";
+                break;
+            case 2:
+                this.ordername = "TAKE AWAY";
+                break;
+            case 3:
+                this.ordername = "DELIVERY";
+                break;
+            case 4:
+                this.ordername = "PICK UP";
+                break;
+            case 5:
+                this.ordername = "COUNTER";
+                break;
+            case 6:
+                this.ordername = "ONLINE ORDER";
+                break;
+            case 7:
+                this.ordername = "FB ONLINE ORDER";
+        }
 
         JSONArray addeditems = obj.getJSONArray("added");
         JSONArray removeditems = obj.getJSONArray("removed");

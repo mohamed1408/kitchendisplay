@@ -45,7 +45,132 @@
                     android:onClick="viewFutureKots"/>
             </LinearLayout>
         </LinearLayout>
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+
+        <LinearLayout android:orientation="horizontal"
+            android:id="@+id/typ_filter"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent">
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_width="fill_parent">
+                <ToggleButton
+                    android:id="@+id/takeawaytg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="ToggleButton"
+                    android:textOff="Take Away"
+                    android:textOn="Take Away"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_width="fill_parent">
+                <ToggleButton
+                    android:id="@+id/deltg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="ToggleButton"
+                    android:textOff="Delivery"
+                    android:textOn="Delivery"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_width="fill_parent">
+                <ToggleButton
+                    android:id="@+id/pckuptg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="ToggleButton"
+                    android:textOff="Pick Up"
+                    android:textOn="Pick Up"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight="0.1"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_width="wrap_content">
+                <ToggleButton
+                    android:id="@+id/change_filter1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="ToggleButton"
+                    android:textOff="🔄"
+                    android:textOn="🔄"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:orientation="horizontal"
+            android:id="@+id/status_filter"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent">
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_width="fill_parent">
+                <ToggleButton
+                    android:id="@+id/newtg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="ToggleButton"
+                    android:textOff="New"
+                    android:textOn="New"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_width="fill_parent">
+                <ToggleButton
+                    android:id="@+id/pendtg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="ToggleButton"
+                    android:textOff="Pending"
+                    android:textOn="Pending"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_width="fill_parent">
+                <ToggleButton
+                    android:id="@+id/compltg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="ToggleButton"
+                    android:textOff="Completed"
+                    android:textOn="Completed"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight="0.1"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:layout_width="wrap_content">
+                <ToggleButton
+                    android:id="@+id/change_filter"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="ToggleButton"
+                    android:textOff="🔄"
+                    android:textOn="🔄"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/swipeRefreshLayout"

@@ -1,12 +1,14 @@
 package com.bizone.kitchendisplay;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -67,6 +69,7 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
         TextView deldttimtv = currentItemView.findViewById(R.id.deldttm);
 
         Button status_btn = currentItemView.findViewById(R.id.status_btn);
+        Button undo_btn = currentItemView.findViewById(R.id.undo_btn);
 
         ListView added_lv = (ListView) currentItemView.findViewById(R.id.added_list);
         ListView removed_lv = (ListView) currentItemView.findViewById(R.id.removed_list);
@@ -117,22 +120,32 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
             switch (kot.statusid){
                 case 0:
                     btn_text = "Accept";
+                    status_btn.setEnabled(true);
+                    status_btn.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.yellow)));
                     break;
                 case 1:
                     btn_text = "Start";
+                    status_btn.setEnabled(true);
+                    status_btn.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.yellow)));
                     break;
                 case 2:
                     btn_text = "Complete";
+                    status_btn.setEnabled(true);
+                    status_btn.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.green)));
                     break;
                 case 3:
                     btn_text = "Serve";
+                    status_btn.setEnabled(true);
+                    status_btn.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.purple)));
                     break;
                 case 4:
                     btn_text = "Served";
                     status_btn.setEnabled(false);
+                    status_btn.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.white)));
                     break;
             }
         }
+
         status_btn.setText(btn_text);
         status_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,6 +173,45 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
                                 int status = resBody.getInt("status");
                                 if(status == 200){
                                     kot.statusid += 1;
+                                    kot.isloading = false;
+                                    ((MainActivity) _context).updateList();
+                                }
+                            } catch (JSONException e) {
+                                Log.i("KOT_SATUS_CHANGE", String.valueOf(e));
+                                kot.isloading = false;
+                                ((MainActivity) _context).updateList();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        undo_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(kot.statusid > 1 && kot.isloading != true) {
+                    String url = "https://biz1pos.azurewebsites.net/api/KOT/KOTStatusChange?kotid=" + kot.kotid + "&statusid=" + (kot.statusid-1);
+                    Request req = new Request.Builder()
+                            .url(url)
+                            .build();
+                    kot.isloading = true;
+                    ((MainActivity) _context).updateList();
+                    client.newCall(req).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            Log.i("KOT_SATUS_CHANGE", String.valueOf(e));
+                            kot.isloading = false;
+                            ((MainActivity) _context).updateList();
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            // Log.i("KOT_SATUS_CHANGE", response.body().string());
+                            try {
+                                JSONObject resBody = new JSONObject(response.body().string());
+                                int status = resBody.getInt("status");
+                                if(status == 200){
+                                    kot.statusid -= 1;
                                     kot.isloading = false;
                                     ((MainActivity) _context).updateList();
                                 }

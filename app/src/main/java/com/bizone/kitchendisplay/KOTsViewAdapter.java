@@ -205,45 +205,40 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
         undo_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(added_tv.getVisibility() == View.GONE) {
-                    added_tv.setVisibility(View.VISIBLE);
-                } else {
-                    added_tv.setVisibility(View.GONE);
+                if(kot.statusid > 1 && kot.isloading != true) {
+                    String url = "https://biz1pos.azurewebsites.net/api/KOT/KOTStatusChange?kotid=" + kot.kotid + "&statusid=" + (kot.statusid-1);
+                    Request req = new Request.Builder()
+                            .url(url)
+                            .build();
+                    kot.isloading = true;
+                    ((MainActivity) _context).updateList();
+                    client.newCall(req).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            Log.i("KOT_SATUS_CHANGE", String.valueOf(e));
+                            kot.isloading = false;
+                            ((MainActivity) _context).updateList();
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            // Log.i("KOT_SATUS_CHANGE", response.body().string());
+                            try {
+                                JSONObject resBody = new JSONObject(response.body().string());
+                                int status = resBody.getInt("status");
+                                if(status == 200){
+                                    kot.statusid -= 1;
+                                    kot.isloading = false;
+                                    ((MainActivity) _context).updateList();
+                                }
+                            } catch (JSONException e) {
+                                Log.i("KOT_SATUS_CHANGE", String.valueOf(e));
+                                kot.isloading = false;
+                                ((MainActivity) _context).updateList();
+                            }
+                        }
+                    });
                 }
-//                if(kot.statusid > 1 && kot.isloading != true) {
-//                    String url = "https://biz1pos.azurewebsites.net/api/KOT/KOTStatusChange?kotid=" + kot.kotid + "&statusid=" + (kot.statusid-1);
-//                    Request req = new Request.Builder()
-//                            .url(url)
-//                            .build();
-//                    kot.isloading = true;
-//                    ((MainActivity) _context).updateList();
-//                    client.newCall(req).enqueue(new Callback() {
-//                        @Override
-//                        public void onFailure(Call call, IOException e) {
-//                            Log.i("KOT_SATUS_CHANGE", String.valueOf(e));
-//                            kot.isloading = false;
-//                            ((MainActivity) _context).updateList();
-//                        }
-//
-//                        @Override
-//                        public void onResponse(Call call, Response response) throws IOException {
-//                            // Log.i("KOT_SATUS_CHANGE", response.body().string());
-//                            try {
-//                                JSONObject resBody = new JSONObject(response.body().string());
-//                                int status = resBody.getInt("status");
-//                                if(status == 200){
-//                                    kot.statusid -= 1;
-//                                    kot.isloading = false;
-//                                    ((MainActivity) _context).updateList();
-//                                }
-//                            } catch (JSONException e) {
-//                                Log.i("KOT_SATUS_CHANGE", String.valueOf(e));
-//                                kot.isloading = false;
-//                                ((MainActivity) _context).updateList();
-//                            }
-//                        }
-//                    });
-//                }
             }
         });
         // then return the recyclable view

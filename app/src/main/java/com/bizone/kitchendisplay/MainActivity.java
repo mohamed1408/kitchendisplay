@@ -4,7 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.sql.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -59,15 +64,34 @@ public class MainActivity extends AppCompatActivity {
     ListView listView;
     List<Integer> selected_types = new ArrayList<Integer>();
     List<Integer> selected_statuses = new ArrayList<Integer>();
+    Intent loginI;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        loginI = new Intent(MainActivity.this, LoginActivity.class);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String compId = preferences.getString("companyid", "0");
+        String storId = preferences.getString("companyid", "0");
+
+        Log.i("GETTING_PREFS", "CompanyId: " + compId + " StoreId: " + storId);
+
+        if(compId == "0" || storId == "0") {
+            startActivity(loginI);
+            return;
+        }
+
         setContentView(R.layout.activity_main);
 
         storeid = 4;
         companyid = 3;
         kotgroupid = 15;
         base_url = "https://biz1pos.azurewebsites.net/";
+
+        selected_types.addAll(Arrays.asList(2,3,4));
+        selected_statuses.addAll(Arrays.asList(0,1,2,3,4));
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         now_btn = (Button)findViewById(R.id.now_btn);
@@ -107,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 if(b) {
                     selected_statuses.add(0);
                 } else {
-                    selected_types.removeIf(x -> x == 0);
+                    selected_statuses.removeIf(x -> x == 0);
                 }
                 applyFilter();
             }
@@ -118,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 if(b) {
                     selected_statuses.addAll(Arrays.asList(1,2,3));
                 } else {
-                    selected_types.removeIf(x -> x >= 1 && x <= 3);
+                    selected_statuses.removeIf(x -> x >= 1 && x <= 3);
                 }
                 applyFilter();
             }
@@ -129,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 if(b) {
                     selected_statuses.add(4);
                 } else {
-                    selected_types.removeIf(x -> x == 4);
+                    selected_statuses.removeIf(x -> x == 4);
                 }
                 applyFilter();
             }
@@ -153,9 +177,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b) {
-                    selected_statuses.add(2);
+                    selected_types.add(2);
                 } else {
-                    selected_types.removeIf(x -> x == 4);
+                    selected_types.removeIf(x -> x == 2);
                 }
                 applyFilter();
             }
@@ -164,9 +188,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b) {
-                    selected_statuses.add(3);
+                    selected_types.add(3);
                 } else {
-                    selected_types.removeIf(x -> x == 4);
+                    selected_types.removeIf(x -> x == 3);
                 }
                 applyFilter();
             }
@@ -175,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b) {
-                    selected_statuses.add(4);
+                    selected_types.add(4);
                 } else {
                     selected_types.removeIf(x -> x == 4);
                 }
@@ -282,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
         nKOTs.sort((a,b) -> a.deliverydatetime.compareTo(b.deliverydatetime));
         fKOTs.sort((a,b) -> a.deliverydatetime.compareTo(b.deliverydatetime));
         Log.i("KOT FILTER", "AllKots: " + allKOTs.size() + " nKots: " + nKOTs.size() + " fKOTs: " + fKOTs.size());
+        Log.i("KOT FILTER", "selected_types: " + selected_types.size() + " selected_statuses: " + selected_statuses.size());
         if(!now_btn.isEnabled()) viewNowKots(now_btn);
         else if(!future_btn.isEnabled()) viewFutureKots(future_btn);
     }
@@ -314,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void  signalRconfig() {
+    public void signalRconfig() {
          hubConnection.on("DeliveryOrderUpdate", (o_storeid, del_storeid, invoiceno, event, orderid) -> {
              Log.i("SIGNAL_R_DELORDUPDATE", o_storeid + " " + del_storeid + " " + invoiceno + " " + event + " " + orderid);
              if(del_storeid == storeid) {
@@ -326,5 +351,9 @@ public class MainActivity extends AppCompatActivity {
          hubConnection.onClosed((a) -> {
              Log.i("SIGNAL_R_DELORDUPDATE", "Error");
          });
+    }
+
+    public void login(View v) {
+        setContentView(R.layout.activity_main);
     }
 }

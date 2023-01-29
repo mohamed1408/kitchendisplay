@@ -3,13 +3,24 @@ package com.bizone.kitchendisplay;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -28,6 +39,9 @@ public class LoginActivity extends AppCompatActivity {
     ProgressBar loader;
     OkHttpClient client = new OkHttpClient();
     String base_url;
+    StoreVIewAdapter adapter;
+    ArrayList<Store> stores;
+    Layout bs_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +56,10 @@ public class LoginActivity extends AppCompatActivity {
         passTxt = findViewById(R.id.password);
 
         loader = findViewById(R.id.loading);
+
+        stores = new ArrayList<Store>();
+
+        adapter = new StoreVIewAdapter(this,stores);
     }
 
     public void Login(View v) {
@@ -65,18 +83,87 @@ public class LoginActivity extends AppCompatActivity {
         client.newCall(req).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                loader.setVisibility(View.GONE);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loader.setVisibility(View.GONE);
+                    }
+                });
                 Log.i("LOGIN_ERROR", String.valueOf(e));
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                loader.setVisibility(View.GONE);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loader.setVisibility(View.GONE);
+                    }
+                });
                 if(response.isSuccessful()) {
-                    Log.i("LOGIN_SUCCESS", response.body().string());
+//                    Log.i("LOGIN_SUCCESS", response.body().string());
+                    JSONObject responseObject;
+                    JSONArray stores_arr = new JSONArray();
+                    String resp_body_str = response.body().string();
+                    try {
+                        responseObject = new JSONObject(resp_body_str);
+                        stores_arr = responseObject.getJSONArray("data");
+                        for(int i=0; i<stores_arr.length(); i++) {
+                            JSONObject store_ob = stores_arr.getJSONObject(i);
+                            Store store = new Store(store_ob);
+                            stores.add(store);
+                        }
+                        stores.sort((a,b) -> a.name.compareTo(b.name));
+                    } catch (JSONException e) {
+                        Log.i("JOSN_PARSE_ERROR", "UNAME: " + uname + " PASS: " + pass);
+                        Log.i("JOSN_PARSE_ERROR", resp_body_str);
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showBottomSheetDialog();
+                        }
+                    });
                 }
             }
         });
 
+    }
+
+    private void showBottomSheetDialog() {
+
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(R.layout.bottom_sheet);
+
+        bottomSheetDialog.setCancelable(false);
+
+        ListView store_lv = bottomSheetDialog.findViewById(R.id.store_list);
+        Button close_btn = bottomSheetDialog.findViewById(R.id.close_btn);
+
+        close_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.cancel();
+            }
+        });
+
+        adapter = new StoreVIewAdapter(bottomSheetDialog.getContext(),stores);
+        store_lv.setAdapter(adapter);
+        store_lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.i("STORE_SELECT", stores.get(i).id + " " + stores.get(i).name);
+            }
+        });
+
+        adapter.addAll(stores);
+        adapter.notifyDataSetChanged();
+        // LinearLayout copy = bottomSheetDialog.findViewById(R.id.copyLinearLayout);
+        // LinearLayout share = bottomSheetDialog.findViewById(R.id.shareLinearLayout);
+        // LinearLayout upload = bottomSheetDialog.findViewById(R.id.uploadLinearLaySout);
+        // LinearLayout download = bottomSheetDialog.findViewById(R.id.download);
+        // LinearLayout delete = bottomSheetDialog.findViewById(R.id.delete);
+
+        bottomSheetDialog.show();
     }
 }

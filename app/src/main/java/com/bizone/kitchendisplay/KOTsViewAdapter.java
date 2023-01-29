@@ -84,7 +84,7 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
         LinearLayout addedLO = currentItemView.findViewById(R.id.addlayout);
 
         TextView added_tv = (TextView) currentItemView.findViewById(R.id.added_list);
-//        ListView removed_lv = (ListView) currentItemView.findViewById(R.id.removed_list);
+        // ListView removed_lv = (ListView) currentItemView.findViewById(R.id.removed_list);
 
         ArrayList<String> added_prods = new ArrayList<>();
         ArrayList<String> removed_prods = new ArrayList<>();

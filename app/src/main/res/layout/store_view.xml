@@ -17,7 +17,8 @@
         android:id="@+id/store_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Download File"
+        android:text="Adampbakkam"
+        android:textSize="20dp"
         android:layout_gravity="center_vertical"
         android:padding="8dp"/>
 </LinearLayout>

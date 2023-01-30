@@ -7,10 +7,11 @@ import org.json.JSONObject;
 
 public class Store {
     String name;
-    Integer id;
+    Integer id, companyid;
 
     public Store(@NonNull JSONObject obj) throws JSONException {
         this.name = obj.getString("Name");
         this.id = obj.getInt("Id");
+        this.companyid = obj.getInt("CompanyId");
     }
 }

@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     List<Integer> selected_types = new ArrayList<Integer>();
     List<Integer> selected_statuses = new ArrayList<Integer>();
     Intent loginI;
+    SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,22 +75,24 @@ public class MainActivity extends AppCompatActivity {
         loginI = new Intent(MainActivity.this, LoginActivity.class);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = preferences.edit();
 
-        String compId = preferences.getString("companyid", "0");
-        String storId = preferences.getString("companyid", "0");
+        companyid = preferences.getInt("companyid", 0);
+        storeid = preferences.getInt("storeid", 0);
+        kotgroupid = preferences.getInt("kotgroupid", 0);
 
-        Log.i("GETTING_PREFS", "CompanyId: " + compId + " StoreId: " + storId);
+        Log.i("GETTING_PREFS", "CompanyId: " + companyid + " StoreId: " + storeid + " KOTGroupId: " + kotgroupid);
 
-        if(compId == "0" || storId == "0") {
+        if(companyid == 0 || storeid == 0) {
             startActivity(loginI);
             return;
         }
 
         setContentView(R.layout.activity_main);
 
-        storeid = 4;
-        companyid = 3;
-        kotgroupid = 15;
+//        storeid = 4;
+//        companyid = 3;
+//        kotgroupid = 15;
         base_url = "https://biz1pos.azurewebsites.net/";
 
         selected_types.addAll(Arrays.asList(2,3,4));
@@ -219,6 +224,31 @@ public class MainActivity extends AppCompatActivity {
         });
         FetchItems();
     }
+
+    // create an action bar button
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // R.menu.mymenu is a reference to an xml file named mymenu.xml which should be inside your res/menu directory.
+        // If you don't have res/menu, just create a directory named "menu" inside res
+        getMenuInflater().inflate(R.menu.logout_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // handle button activities
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_logout) {
+            // do something here
+            // Log.i("LOGOUT_EVENT", "id");
+            editor.clear();
+            editor.apply();
+            startActivity(loginI);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     //METHOD WHICH WILL HANDLE DYNAMIC INSERTION
     public void FetchItems() {
         Request req = new Request.Builder()

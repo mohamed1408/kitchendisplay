@@ -5,7 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:orientation="vertical"
     tools:context=".LockScreenActivity">
+    <TextView
+        android:id="@+id/pin_view"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:textFontWeight="50"
+        android:textColor="#60b246"
+        android:letterSpacing="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <GridLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,6 +30,7 @@
             android:stateListAnimator="@null"
             android:text="1"
             android:textSize="20sp"
+            android:onClick="numPadEvent"
             android:background="@drawable/num_button_bg"/>
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="100dp"
@@ -27,6 +38,7 @@
             android:stateListAnimator="@null"
             android:text="2"
             android:textSize="20sp"
+            android:onClick="numPadEvent"
             android:background="@drawable/num_button_bg"/>
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="100dp"
@@ -34,6 +46,7 @@
             android:stateListAnimator="@null"
             android:text="3"
             android:textSize="20sp"
+            android:onClick="numPadEvent"
             android:background="@drawable/num_button_bg"/>
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="100dp"
@@ -41,6 +54,7 @@
             android:stateListAnimator="@null"
             android:text="4"
             android:textSize="20sp"
+            android:onClick="numPadEvent"
             android:background="@drawable/num_button_bg"/>
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="100dp"
@@ -48,6 +62,7 @@
             android:stateListAnimator="@null"
             android:text="5"
             android:textSize="20sp"
+            android:onClick="numPadEvent"
             android:background="@drawable/num_button_bg"/>
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="100dp"
@@ -55,6 +70,7 @@
             android:stateListAnimator="@null"
             android:text="6"
             android:textSize="20sp"
+            android:onClick="numPadEvent"
             android:background="@drawable/num_button_bg"/>
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="100dp"
@@ -62,6 +78,7 @@
             android:stateListAnimator="@null"
             android:text="7"
             android:textSize="20sp"
+            android:onClick="numPadEvent"
             android:background="@drawable/num_button_bg"/>
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="100dp"
@@ -69,6 +86,7 @@
             android:stateListAnimator="@null"
             android:text="8"
             android:textSize="20sp"
+            android:onClick="numPadEvent"
             android:background="@drawable/num_button_bg"/>
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="100dp"
@@ -76,14 +94,16 @@
             android:stateListAnimator="@null"
             android:text="9"
             android:textSize="20sp"
+            android:onClick="numPadEvent"
             android:background="@drawable/num_button_bg"/>
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:stateListAnimator="@null"
-            android:text="DELETE"
+            android:text="delete"
             android:textColor="@color/red"
             android:textSize="20sp"
+            android:onClick="numPadEvent"
             android:background="@drawable/num_button_bg"/>
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="100dp"
@@ -91,14 +111,31 @@
             android:stateListAnimator="@null"
             android:text="0"
             android:textSize="20sp"
+            android:onClick="numPadEvent"
             android:background="@drawable/num_button_bg"/>
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:stateListAnimator="@null"
-            android:text="unlock"
-            android:textColor="@color/green"
-            android:textSize="20sp"
-            android:background="@drawable/num_button_bg"/>
+        <LinearLayout
+            android:gravity="center"
+            android:layout_gravity="center">
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/unlock_btn"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:stateListAnimator="@null"
+                android:text="unlock"
+                android:textColor="@color/green"
+                android:textSize="20sp"
+                android:onClick="numPadEvent"
+                android:visibility="visible"
+                android:background="@drawable/num_button_bg"/>
+            <ProgressBar
+                android:id="@+id/unlock_loading"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:indeterminate="true"
+                android:indeterminateTintMode="src_atop"
+                android:indeterminateTint="#60b246" />
+        </LinearLayout>
     </GridLayout>
 </LinearLayout>

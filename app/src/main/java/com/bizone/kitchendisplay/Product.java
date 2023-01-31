@@ -7,11 +7,11 @@ import org.json.JSONObject;
 
 public class Product {
     String name;
-    Integer quantity;
+    Double quantity;
 
     public Product(@NonNull JSONObject obj) throws JSONException {
         this.name = obj.getString("showname");
-        this.quantity = obj.getInt("Quantity");
+        this.quantity = obj.getDouble("Quantity");
     }
 
 }

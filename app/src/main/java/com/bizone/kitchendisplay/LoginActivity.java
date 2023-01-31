@@ -50,14 +50,14 @@ public class LoginActivity extends AppCompatActivity {
     ArrayList<KOTGroup> kotGroups;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
-    Intent mainAct;
+    Intent lockAct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mainAct = new Intent(LoginActivity.this, MainActivity.class);
+        lockAct = new Intent(LoginActivity.this, LockScreenActivity.class);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
@@ -275,7 +275,7 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putInt("kotgroupid", kotgroupid);
                 editor.apply();
                 bottomSheetDialog.cancel();
-                startActivity(mainAct);
+                startActivity(lockAct);
             }
         });
         kotGroupAdapter.notifyDataSetChanged();

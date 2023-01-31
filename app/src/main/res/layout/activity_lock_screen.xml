@@ -1,9 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     tools:context=".LockScreenActivity">
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:rowCount="4"
+        android:columnCount="3"
+        android:background="#ffffff"
+        android:gravity="center"
+        android:layout_gravity="center">
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:stateListAnimator="@null"
+            android:text="1"
+            android:textSize="20sp"
+            android:background="@drawable/num_button_bg"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:stateListAnimator="@null"
+            android:text="2"
+            android:textSize="20sp"
+            android:background="@drawable/num_button_bg"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:stateListAnimator="@null"
+            android:text="3"
+            android:textSize="20sp"
+            android:background="@drawable/num_button_bg"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:stateListAnimator="@null"
+            android:text="4"
+            android:textSize="20sp"
+            android:background="@drawable/num_button_bg"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:stateListAnimator="@null"
+            android:text="5"
+            android:textSize="20sp"
+            android:background="@drawable/num_button_bg"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:stateListAnimator="@null"
+            android:text="6"
+            android:textSize="20sp"
+            android:background="@drawable/num_button_bg"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:stateListAnimator="@null"
+            android:text="7"
+            android:textSize="20sp"
+            android:background="@drawable/num_button_bg"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:stateListAnimator="@null"
+            android:text="8"
+            android:textSize="20sp"
+            android:background="@drawable/num_button_bg"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:stateListAnimator="@null"
+            android:text="9"
+            android:textSize="20sp"
+            android:background="@drawable/num_button_bg"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:stateListAnimator="@null"
+            android:text="DELETE"
+            android:textColor="@color/red"
+            android:textSize="20sp"
+            android:background="@drawable/num_button_bg"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:stateListAnimator="@null"
+            android:text="0"
+            android:textSize="20sp"
+            android:background="@drawable/num_button_bg"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:stateListAnimator="@null"
+            android:text="unlock"
+            android:textColor="@color/green"
+            android:textSize="20sp"
+            android:background="@drawable/num_button_bg"/>
+    </GridLayout>
+</LinearLayout>

@@ -90,24 +90,21 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-//        storeid = 4;
-//        companyid = 3;
-//        kotgroupid = 15;
         base_url = "https://biz1pos.azurewebsites.net/";
 
         selected_types.addAll(Arrays.asList(2,3,4));
         selected_statuses.addAll(Arrays.asList(0,1,2,3,4));
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+
+        listView = (ListView) findViewById(R.id.kot_list);
+
         now_btn = (Button)findViewById(R.id.now_btn);
         future_btn = (Button)findViewById(R.id.future_btn);
-        listView = (ListView) findViewById(R.id.kot_list);
-        takeawaytg = (ToggleButton)findViewById(R.id.takeawaytg);
+
         deltg = (ToggleButton)findViewById(R.id.deltg);
         pckuptg = (ToggleButton)findViewById(R.id.pckuptg);
-        newtg = (ToggleButton)findViewById(R.id.newtg);
-        pendtg = (ToggleButton)findViewById(R.id.pendtg);
-        compltg = (ToggleButton)findViewById(R.id.compltg);
+        takeawaytg = (ToggleButton)findViewById(R.id.takeawaytg);
 
         change_filter = (ToggleButton)findViewById(R.id.change_filter);
         change_filter1 = (ToggleButton)findViewById(R.id.change_filter1);
@@ -116,11 +113,12 @@ public class MainActivity extends AppCompatActivity {
         pendtg = (ToggleButton)findViewById(R.id.pendtg);
         compltg = (ToggleButton)findViewById(R.id.compltg);
 
-        status_filter = (LinearLayout) findViewById(R.id.status_filter);
+
         typ_filter = (LinearLayout) findViewById(R.id.typ_filter);
+        status_filter = (LinearLayout) findViewById(R.id.status_filter);
 
 
-        adapter = new KOTsViewAdapter(this, KOTs);
+        adapter = new KOTsViewAdapter(this, new ArrayList<Kot>());
 
         hubConnection = HubConnectionBuilder.create(base_url + "uphub").build();
         hubConnection.start();
@@ -251,6 +249,7 @@ public class MainActivity extends AppCompatActivity {
 
     //METHOD WHICH WILL HANDLE DYNAMIC INSERTION
     public void FetchItems() {
+        Log.i("RUNONUITHREAD", "APPLYING FILTER");
         Request req = new Request.Builder()
                 .url(url)
                 .build();
@@ -269,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         nKOTs.clear();
                         fKOTs.clear();
+                        allKOTs.clear();
                         JSONArray array = new JSONArray(response.body().string());
                         JSONArray kots = new JSONArray();
                         for (int i=0; i<array.length(); i++) {
@@ -302,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                Log.i("RUNONUITHREAD", "APPLYING FILTER");
                                 now_btn.setEnabled(false);
                                 future_btn.setEnabled(true);
                                 applyFilter();
@@ -322,11 +323,11 @@ public class MainActivity extends AppCompatActivity {
         Kot kot;
         nKOTs.clear();
         fKOTs.clear();
-        for (int i=0; i<allKOTs.size(); i++){
+        for (int i=0; i<allKOTs.size(); i++) {
             kot = allKOTs.get(i);
             if(selected_types.contains(kot.ordertypid) && selected_statuses.contains(kot.statusid)) {
                 LocalDateTime delDate = LocalDateTime.parse(kot.deliverydatetime);
-                if(endOfDay.isAfter(delDate)){
+                if(endOfDay.isAfter(delDate)) {
                     nKOTs.add(kot);
                 } else {
                     fKOTs.add(kot);
@@ -374,7 +375,12 @@ public class MainActivity extends AppCompatActivity {
              Log.i("SIGNAL_R_DELORDUPDATE", o_storeid + " " + del_storeid + " " + invoiceno + " " + event + " " + orderid);
              if(del_storeid == storeid) {
                  Log.i("SIGNAL_R_DELORDUPDATE", "Fetching KOTs.....");
-                 FetchItems();
+                 runOnUiThread(new Runnable() {
+                     @Override
+                     public void run() {
+                        FetchItems();
+                     }
+                 });
              }
          },Integer.class, Integer.class, String.class, String.class, Integer.class);
 

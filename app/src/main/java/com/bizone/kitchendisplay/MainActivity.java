@@ -278,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
                             String Note = object.getString("Note");
                             String json = object.getString("json");
                             Integer Id = object.getInt("Id");
+                            JSONObject customerDetails = object.getJSONObject("CustomerDetails");
 
                             JSONObject jsObject = new JSONObject(json);
 
@@ -295,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
                             jsObject.put("added", addeditems);
                             jsObject.put("removed", removeditems);
                             Kot kot = new Kot();
-                            kot.populate(jsObject);
+                            kot.populate(jsObject,customerDetails);
 
                             allKOTs.add(kot);
                         }

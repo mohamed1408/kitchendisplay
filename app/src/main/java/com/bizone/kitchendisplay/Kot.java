@@ -1,5 +1,7 @@
 package com.bizone.kitchendisplay;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,13 +10,17 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 
 public class Kot {
-    String invoiceno, deliverydatetime, instructions, ordername, note;
+    String invoiceno, deliverydatetime, instructions, ordername, note, customername;
     Long createdtimestamp;
     Integer statusid, kotno, ordertypid, kotid;
     ArrayList<Product> added, removed;
     boolean isloading, isitemrendered;
 
-    public void populate(JSONObject obj) throws JSONException {
+    public void populate(JSONObject obj, JSONObject customerDetails) throws JSONException {
+        Log.i("KOT_CONTRUCTOR", String.valueOf(obj.toString().contains("CustomerDetails")));
+//        JSONObject customerDetails = obj.getJSONObject("CustomerDetails");
+
+        this.customername = customerDetails.getString("Name");
         this.invoiceno = obj.getString("invoiceno");
         this.deliverydatetime = obj.getString("DeliveryDateTime");
         this.instructions = obj.getString("Instruction");

@@ -1,5 +1,6 @@
 package com.bizone.kitchendisplay;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -73,12 +74,13 @@ public class LockScreenActivity extends AppCompatActivity {
         }
     }
 
+    @NonNull
     private String chop(String s) {
         return s.substring(0, s.length() - 1);
     }
 
     private void unlock(String pin) {
-        String url = base_url + "api/LogIn/pinlogin?companyid=" + companyid + "&pin=" + pin + "&storeid=" + storeid;
+        String url = base_url + "api/LogIn/pinlogin2?companyid=" + companyid + "&pin=" + pin + "&storeid=" + storeid;
 
         Request req = new Request.Builder()
                 .url(url)

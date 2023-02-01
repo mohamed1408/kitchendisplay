@@ -2,6 +2,7 @@ package com.bizone.kitchendisplay;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Paint;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -82,8 +83,12 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
         Button undo_btn = currentItemView.findViewById(R.id.undo_btn);
 
         LinearLayout addedLO = currentItemView.findViewById(R.id.addlayout);
+        LinearLayout removLO = currentItemView.findViewById(R.id.remLayout);
 
         TextView added_tv = (TextView) currentItemView.findViewById(R.id.added_list);
+        TextView removed_tv = (TextView) currentItemView.findViewById(R.id.removed_list);
+        TextView cname_tv = (TextView) currentItemView.findViewById(R.id.customername);
+        TextView note_tv = (TextView) currentItemView.findViewById(R.id.note);
         // ListView removed_lv = (ListView) currentItemView.findViewById(R.id.removed_list);
 
         ArrayList<String> added_prods = new ArrayList<>();
@@ -100,12 +105,29 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
         }
         Log.i("KOT_ITEMS_LOG", kot.isitemrendered + " " + kot.invoiceno);
 //        if(!kot.isitemrendered) {
+        if(kot.added.size() == 0) {
+            addedLO.setVisibility(View.GONE);
+        }
+        if(kot.removed.size() == 0) {
+            removLO.setVisibility(View.GONE);
+        }
+
+        cname_tv.setText(kot.customername);
+        note_tv.setText(kot.note);
+
         String itemText = "";
         for(int i=0; i<kot.added.size(); i++){
             itemText += kot.added.get(i).quantity + " x " + kot.added.get(i).name + "\n";
             added_prods.add(kot.added.get(i).quantity + " x " + kot.added.get(i).name);
         }
         added_tv.setText(itemText);
+        itemText = "";
+        for(int i=0; i<kot.removed.size(); i++){
+            itemText += kot.removed.get(i).quantity + " x " + kot.removed.get(i).name + "\n";
+            added_prods.add(kot.removed.get(i).quantity + " x " + kot.removed.get(i).name);
+        }
+        removed_tv.setText(itemText);
+        removed_tv.setPaintFlags(removed_tv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 //            for(int i=0; i<kot.removed.size(); i++){
 //                // Log.i("KOT_ITEMS_LOG", kot.added.get(i).quantity + " x " + kot.added.get(i).name);
 //                removed_prods.add(kot.removed.get(i).quantity + " x " + kot.removed.get(i).name);

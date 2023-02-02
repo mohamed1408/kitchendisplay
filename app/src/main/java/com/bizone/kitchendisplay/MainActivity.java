@@ -1,12 +1,26 @@
 package com.bizone.kitchendisplay;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -68,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
     List<Integer> selected_statuses = new ArrayList<Integer>();
     Intent loginI;
     SharedPreferences.Editor editor;
+    Uri alarmSound;
+    MediaPlayer mp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,35 +100,36 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i("GETTING_PREFS", "CompanyId: " + companyid + " StoreId: " + storeid + " KOTGroupId: " + kotgroupid);
 
-        if(companyid == 0 || storeid == 0) {
+        if (companyid == 0 || storeid == 0) {
             startActivity(loginI);
             return;
         }
+        mp = MediaPlayer.create(getApplicationContext(), R.raw.neworder);
 
         setContentView(R.layout.activity_main);
 
         base_url = "https://biz1pos.azurewebsites.net/";
 
-        selected_types.addAll(Arrays.asList(2,3,4));
-        selected_statuses.addAll(Arrays.asList(0,1,2,3,4));
+        selected_types.addAll(Arrays.asList(2, 3, 4));
+        selected_statuses.addAll(Arrays.asList(0, 1, 2, 3, 4));
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         listView = (ListView) findViewById(R.id.kot_list);
 
-        now_btn = (Button)findViewById(R.id.now_btn);
-        future_btn = (Button)findViewById(R.id.future_btn);
+        now_btn = (Button) findViewById(R.id.now_btn);
+        future_btn = (Button) findViewById(R.id.future_btn);
 
-        deltg = (ToggleButton)findViewById(R.id.deltg);
-        pckuptg = (ToggleButton)findViewById(R.id.pckuptg);
-        takeawaytg = (ToggleButton)findViewById(R.id.takeawaytg);
+        deltg = (ToggleButton) findViewById(R.id.deltg);
+        pckuptg = (ToggleButton) findViewById(R.id.pckuptg);
+        takeawaytg = (ToggleButton) findViewById(R.id.takeawaytg);
 
-        change_filter = (ToggleButton)findViewById(R.id.change_filter);
-        change_filter1 = (ToggleButton)findViewById(R.id.change_filter1);
+        change_filter = (ToggleButton) findViewById(R.id.change_filter);
+        change_filter1 = (ToggleButton) findViewById(R.id.change_filter1);
 
-        newtg = (ToggleButton)findViewById(R.id.newtg);
-        pendtg = (ToggleButton)findViewById(R.id.pendtg);
-        compltg = (ToggleButton)findViewById(R.id.compltg);
+        newtg = (ToggleButton) findViewById(R.id.newtg);
+        pendtg = (ToggleButton) findViewById(R.id.pendtg);
+        compltg = (ToggleButton) findViewById(R.id.compltg);
 
 
         typ_filter = (LinearLayout) findViewById(R.id.typ_filter);
@@ -128,10 +146,16 @@ public class MainActivity extends AppCompatActivity {
         url = base_url + "api/KOT/GetStoreKots?storeId=" + storeid + "&orderid=0&kotGroupId=" + kotgroupid;
         listView.setAdapter(adapter);
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("CHANNEL_ID","CHANNEL_ID", NotificationManager.IMPORTANCE_HIGH);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+
         newtg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
+                if (b) {
                     selected_statuses.add(0);
                 } else {
                     selected_statuses.removeIf(x -> x == 0);
@@ -142,8 +166,8 @@ public class MainActivity extends AppCompatActivity {
         pendtg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
-                    selected_statuses.addAll(Arrays.asList(1,2,3));
+                if (b) {
+                    selected_statuses.addAll(Arrays.asList(1, 2, 3));
                 } else {
                     selected_statuses.removeIf(x -> x >= 1 && x <= 3);
                 }
@@ -153,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         compltg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
+                if (b) {
                     selected_statuses.add(4);
                 } else {
                     selected_statuses.removeIf(x -> x == 4);
@@ -179,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         takeawaytg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
+                if (b) {
                     selected_types.add(2);
                 } else {
                     selected_types.removeIf(x -> x == 2);
@@ -190,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
         deltg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
+                if (b) {
                     selected_types.add(3);
                 } else {
                     selected_types.removeIf(x -> x == 3);
@@ -201,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
         pckuptg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) {
+                if (b) {
                     selected_types.add(4);
                 } else {
                     selected_types.removeIf(x -> x == 4);
@@ -239,7 +263,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_logout) {
             // do something here
-            // Log.i("LOGOUT_EVENT", "id");
             editor.clear();
             editor.apply();
             startActivity(loginI);
@@ -379,7 +402,8 @@ public class MainActivity extends AppCompatActivity {
                  runOnUiThread(new Runnable() {
                      @Override
                      public void run() {
-                        FetchItems();
+                         showNotification();
+                         FetchItems();
                      }
                  });
              }
@@ -390,7 +414,31 @@ public class MainActivity extends AppCompatActivity {
          });
     }
 
-    public void login(View v) {
-        setContentView(R.layout.activity_main);
+    public void showNotification() {
+        Log.i("LOGOUT_EVENT", "id");
+        Bitmap icon = BitmapFactory.decodeResource(getBaseContext().getResources(),
+                R.drawable.ic_action_logout);
+        mp.setLooping(true);
+        mp.start();
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "CHANNEL_ID")
+                .setSmallIcon(R.drawable.ic_action_logout)
+                .setLargeIcon(icon)
+                .setContentTitle("My notification")
+                .setContentText("Much longer text that cannot fit one line...")
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText("Much longer text that cannot fit one line..."))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MainActivity.this);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            Log.i("NOTIFICATION_PERMISSION_CHECK","NOT_GRANTED");
+            return;
+        }
+        Log.i("NOTIFICATION_PERMISSION_CHECK","GRANTED");
+        managerCompat.notify(1, builder.build());
+    }
+    public void stopNotificationSound() {
+        Log.i("NOTOFICATION_EVENT","Stop Sound");
+        mp.stop();
     }
 }

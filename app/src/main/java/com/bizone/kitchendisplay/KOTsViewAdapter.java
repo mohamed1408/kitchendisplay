@@ -189,6 +189,9 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
             @Override
             public void onClick(View view) {
                 if(kot.statusid < 4 && kot.isloading != true) {
+                    if(kot.statusid == 0) {
+                        ((MainActivity) _context).stopNotificationSound();
+                    }
                     String url = "https://biz1pos.azurewebsites.net/api/KOT/KOTStatusChange?kotid=" + kot.kotid + "&statusid=" + (kot.statusid+1);
                     Request req = new Request.Builder()
                             .url(url)

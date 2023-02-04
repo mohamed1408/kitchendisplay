@@ -23,7 +23,7 @@ public class Kot {
         this.customername = customerDetails.getString("Name");
         this.invoiceno = obj.getString("invoiceno");
         this.deliverydatetime = obj.getString("DeliveryDateTime");
-        this.instructions = obj.getString("Instruction");
+        this.instructions = obj.getString("Message");
         this.note = obj.getString("Note");
 
         this.createdtimestamp = obj.getLong("kotTimeStamp");

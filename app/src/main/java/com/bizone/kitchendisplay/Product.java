@@ -11,7 +11,7 @@ public class Product {
 
     public Product(@NonNull JSONObject obj) throws JSONException {
         this.name = obj.getString("showname");
-        this.quantity = obj.getDouble("Quantity");
+        this.quantity = obj.getDouble("Quantity") + obj.getDouble("ComplementryQty");
     }
 
 }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -80,6 +81,7 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
         TextView timertv = currentItemView.findViewById(R.id.timer);
 
         Button status_btn = currentItemView.findViewById(R.id.status_btn);
+        ImageButton message_btn = currentItemView.findViewById(R.id.message);
         Button undo_btn = currentItemView.findViewById(R.id.undo_btn);
 
         LinearLayout addedLO = currentItemView.findViewById(R.id.addlayout);
@@ -225,6 +227,12 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
                         }
                     });
                 }
+            }
+        });
+        message_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) _context).showInstruction(kot.instructions);
             }
         });
         undo_btn.setOnClickListener(new View.OnClickListener() {

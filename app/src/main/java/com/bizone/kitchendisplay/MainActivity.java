@@ -32,8 +32,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.microsoft.signalr.HubConnection;
 import com.microsoft.signalr.HubConnectionBuilder;
 import com.microsoft.signalr.HubConnectionState;
@@ -265,7 +267,10 @@ public class MainActivity extends AppCompatActivity {
             // do something here
             editor.clear();
             editor.apply();
+            stopNotificationSound();
             startActivity(loginI);
+        } else if(id == R.id.action_mute) {
+            stopNotificationSound();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -299,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
 
                             String DeliveryDateTime = object.getString("DeliveryDateTime");
                             String Note = object.getString("Note");
+                            String Message = object.getString("Message");
                             String json = object.getString("json");
                             Integer Id = object.getInt("Id");
                             JSONObject customerDetails = object.getJSONObject("CustomerDetails");
@@ -316,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
                             jsObject.put("DeliveryDateTime",DeliveryDateTime);
                             jsObject.put("Id",Id);
                             jsObject.put("Note",Note);
+                            jsObject.put("Message",Message);
                             jsObject.put("added", addeditems);
                             jsObject.put("removed", removeditems);
                             Kot kot = new Kot();
@@ -326,6 +333,11 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if(allKOTs.stream().filter(x -> x.statusid == 0).count() > 0) {
+                                    showNotification();
+                                } else {
+                                    stopNotificationSound();
+                                }
                                 Log.i("RUNONUITHREAD", "APPLYING FILTER");
                                 now_btn.setEnabled(false);
                                 future_btn.setEnabled(true);
@@ -402,7 +414,6 @@ public class MainActivity extends AppCompatActivity {
                  runOnUiThread(new Runnable() {
                      @Override
                      public void run() {
-                         showNotification();
                          FetchItems();
                      }
                  });
@@ -413,7 +424,17 @@ public class MainActivity extends AppCompatActivity {
              Log.i("SIGNAL_R_DELORDUPDATE", "Error");
          });
     }
+    public void showInstruction(String instruction) {
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(R.layout.instructions);
 
+        bottomSheetDialog.setCancelable(true);
+
+        TextView instruction_tv = bottomSheetDialog.findViewById(R.id.message);
+
+        instruction_tv.setText(instruction);
+        bottomSheetDialog.show();
+    }
     public void showNotification() {
         Log.i("LOGOUT_EVENT", "id");
         Bitmap icon = BitmapFactory.decodeResource(getBaseContext().getResources(),
@@ -423,10 +444,10 @@ public class MainActivity extends AppCompatActivity {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "CHANNEL_ID")
                 .setSmallIcon(R.drawable.ic_action_logout)
                 .setLargeIcon(icon)
-                .setContentTitle("My notification")
-                .setContentText("Much longer text that cannot fit one line...")
+                .setContentTitle("NEW KOT")
+                .setContentText("Accept the kot 👩‍")
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Much longer text that cannot fit one line..."))
+                        .bigText("Accept the kot 👩 🙂"))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MainActivity.this);
@@ -439,6 +460,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public void stopNotificationSound() {
         Log.i("NOTOFICATION_EVENT","Stop Sound");
-        mp.stop();
+        mp.pause();
     }
 }

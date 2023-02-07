@@ -81,7 +81,7 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
         TextView timertv = currentItemView.findViewById(R.id.timer);
 
         Button status_btn = currentItemView.findViewById(R.id.status_btn);
-        ImageButton message_btn = currentItemView.findViewById(R.id.message);
+//        ImageButton message_btn = currentItemView.findViewById(R.id.message);
         Button undo_btn = currentItemView.findViewById(R.id.undo_btn);
 
         LinearLayout addedLO = currentItemView.findViewById(R.id.addlayout);
@@ -90,6 +90,7 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
         TextView added_tv = (TextView) currentItemView.findViewById(R.id.added_list);
         TextView removed_tv = (TextView) currentItemView.findViewById(R.id.removed_list);
         TextView cname_tv = (TextView) currentItemView.findViewById(R.id.customername);
+        TextView instruction_tv = (TextView) currentItemView.findViewById(R.id.instruction);
         TextView note_tv = (TextView) currentItemView.findViewById(R.id.note);
         // ListView removed_lv = (ListView) currentItemView.findViewById(R.id.removed_list);
 
@@ -115,7 +116,8 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
         }
 
         cname_tv.setText(kot.customername);
-        note_tv.setText(kot.note);
+        note_tv.setText("NOTE: " + kot.note);
+        instruction_tv.setText("INSTRUCTIONS: " + kot.instructions);
 
         String itemText = "";
         for(int i=0; i<kot.added.size(); i++){
@@ -229,12 +231,12 @@ public class KOTsViewAdapter extends ArrayAdapter<Kot> {
                 }
             }
         });
-        message_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity) _context).showInstruction(kot.instructions);
-            }
-        });
+//        message_btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                ((MainActivity) _context).showInstruction(kot.instructions, kot.note);
+//            }
+//        });
         undo_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

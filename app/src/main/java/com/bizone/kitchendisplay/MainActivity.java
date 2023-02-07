@@ -424,15 +424,17 @@ public class MainActivity extends AppCompatActivity {
              Log.i("SIGNAL_R_DELORDUPDATE", "Error");
          });
     }
-    public void showInstruction(String instruction) {
+    public void showInstruction(String instruction, String note) {
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         bottomSheetDialog.setContentView(R.layout.instructions);
 
         bottomSheetDialog.setCancelable(true);
 
+        TextView note_tv = bottomSheetDialog.findViewById(R.id.note);
         TextView instruction_tv = bottomSheetDialog.findViewById(R.id.message);
 
-        instruction_tv.setText(instruction);
+        note_tv.setText("NOTE: " + note);
+        instruction_tv.setText("INSTRUCTIONS: " + instruction);
         bottomSheetDialog.show();
     }
     public void showNotification() {
